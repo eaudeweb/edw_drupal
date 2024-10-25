@@ -1,0 +1,7 @@
+name: 'EDW Person content type'
+type: module
+core_version_requirement: ^9 || ^10 || ^11
+package: Eau de Web
+description: 'Creates the Person content type'
+dependencies:
+  - edw_modules:edw_modules
