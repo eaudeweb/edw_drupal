@@ -12,10 +12,10 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\edw_document\Form\DownloadDocumentsForm;
 use Drupal\edw_document\Services\DocumentManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Controller routines for documents.
@@ -111,7 +111,7 @@ class DocumentController extends ControllerBase implements ContainerInjectionInt
       }
 
       return $this->documentManager->generateArchive($files);
-    } catch (FileNotFoundException) {
+    } catch (NotFoundHttpException) {
       $response->setStatusCode(404);
       $response->setContent('Files not found');
       return $response;

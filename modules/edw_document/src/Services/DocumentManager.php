@@ -17,6 +17,7 @@ use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Service for DocumentManager.
@@ -366,11 +367,17 @@ class DocumentManager {
       $uri = $file->getFileUri();
       $fileError = $this->fileSystem->getDestinationFilename($uri, FileSystemInterface::EXISTS_ERROR);
       if ($fileError) {
-        throw new FileNotFoundException($uri);
+        unset($files[$fid]);
+        continue;
       }
+
       if (!in_array(strtolower(pathinfo($uri, PATHINFO_EXTENSION)), $formats)) {
         unset($files[$fid]);
       }
+    }
+
+    if (empty($files)) {
+      throw new NotFoundHttpException();
     }
 
     return $files;
