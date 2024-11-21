@@ -1,0 +1,10 @@
+{
+    "name": "eaudeweb/edw_paragraphs_gallery",
+    "description": "test",
+    "type": "drupal-module",
+    "homepage": "https://drupal.org/project/components",
+    "license": "GPL-2.0-or-later",
+    "require": {
+      "drupal/core": "^10.2 || ^11"
+    }
+}
