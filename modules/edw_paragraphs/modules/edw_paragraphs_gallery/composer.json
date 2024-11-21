@@ -6,6 +6,6 @@
     "license": "GPL-2.0-or-later",
     "require": {
       "drupal/core": "^10.2 || ^11",
-      "drupal/components": "^3.1"
+      "drupal/cas": "^2"
     }
 }
