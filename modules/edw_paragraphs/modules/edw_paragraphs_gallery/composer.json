@@ -5,6 +5,7 @@
     "homepage": "https://drupal.org/project/components",
     "license": "GPL-2.0-or-later",
     "require": {
-      "drupal/core": "^10.2 || ^11"
+      "drupal/core": "^10.2 || ^11",
+      "drupal/components": "^3.1"
     }
 }
