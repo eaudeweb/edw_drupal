@@ -132,7 +132,7 @@ class MeetingDocumentForm implements ContainerInjectionInterface {
       $routeRedirect = "edw_event.documents.$phase.document_type";
     }
     $this->moduleHandler->invokeAll('meeting_document_form_alter_route_redirect', [
-      $request, &$routeRedirect, &$options,
+      $form_state, $request, &$routeRedirect, &$options,
     ]);
     $form_state->setRedirect($routeRedirect, ['node' => $meetingId], $options);
   }
