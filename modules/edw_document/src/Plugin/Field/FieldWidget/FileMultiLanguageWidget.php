@@ -13,6 +13,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\file\Plugin\Field\FieldWidget\FileWidget;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Plugin implementation of the 'file_multi_language' widget.
@@ -49,6 +50,13 @@ class FileMultiLanguageWidget extends FileWidget {
   protected $languageManager;
 
   /**
+   * The request object.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
+
+  /**
    * Constructor for FileMultiLanguageWidget.
    *
    * @param string $plugin_id
@@ -67,11 +75,14 @@ class FileMultiLanguageWidget extends FileWidget {
    *   The language manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity type manager.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   *   Request stack object.
    */
-  public function __construct($plugin_id, $pluginDefinition, FieldDefinitionInterface $fieldDefinition, array $settings, array $thirdPartySettings, ElementInfoManagerInterface $elementInfo, LanguageManagerInterface $languageManager, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct($plugin_id, $pluginDefinition, FieldDefinitionInterface $fieldDefinition, array $settings, array $thirdPartySettings, ElementInfoManagerInterface $elementInfo, LanguageManagerInterface $languageManager, EntityTypeManagerInterface $entityTypeManager, RequestStack $requestStack) {
     parent::__construct($plugin_id, $pluginDefinition, $fieldDefinition, $settings, $thirdPartySettings, $elementInfo);
     $this->entityTypeManager = $entityTypeManager;
     $this->languageManager = $languageManager;
+    $this->request = $requestStack->getCurrentRequest();
   }
 
   /**
@@ -86,7 +97,8 @@ class FileMultiLanguageWidget extends FileWidget {
       $configuration['third_party_settings'],
       $container->get('element_info'),
       $container->get('language_manager'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('request_stack')
     );
   }
 
@@ -144,7 +156,7 @@ class FileMultiLanguageWidget extends FileWidget {
    */
   public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state) {
     // Rewrite the parent::extractFormValues() from WidgetBase.
-    $this->extractFormValuesMultiLanguage($items, $form, $form_state);
+    $formValues = $this->extractFormValuesMultiLanguage($items, $form, $form_state);
 
     // Update reference to 'items' stored during upload to take into account
     // changes to values like 'alt' etc.
@@ -155,7 +167,7 @@ class FileMultiLanguageWidget extends FileWidget {
     /** @var \Drupal\Core\Entity\ContentEntityBase $entity */
     $entity = $items->getEntity();
 
-    $values = [];
+    $entityValues = [];
     $translatableFields = $entity->getTranslatableFields(FALSE);
     foreach ($translatableFields as $fieldName => $fieldConfig) {
       switch ($fieldConfig->getFieldDefinition()->getType()) {
@@ -168,36 +180,31 @@ class FileMultiLanguageWidget extends FileWidget {
           $fieldValue = $entity->get($fieldName)->value;
       }
 
-      $values[$fieldName] = $fieldValue;
+      $entityValues[$fieldName] = $fieldValue;
     }
-    // Re-create $field_state['items']. We cannot use $field_state['items']
-    // from parent.
-    $currentLangcode = $entity->get('langcode')->value;
-    $currentItems = [];
-    foreach ($items->getValue() as $item) {
+
+    $translationFiles = [];
+    foreach ($entity->getTranslationLanguages() as $language) {
+      $translationFiles[$language->getId()] = [];
+    }
+
+    foreach ($formValues as $item) {
       $langcode = $item['language'];
-      if ($currentLangcode == $langcode) {
-        $currentItems[] = $item;
-        continue;
-      }
 
-      $translation = $entity->hasTranslation($langcode) ?
-        $entity->getTranslation($langcode) :
-        $entity->addTranslation($langcode, $values);
-
-      $translationValues = array_column($translation->get($field_name)->getValue(), 'target_id');
-      if (in_array($item['target_id'], $translationValues)) {
-        continue;
-      }
-      $translation->get($field_name)->appendItem($item);
+      $translationFiles[$langcode][] = $item;
     }
 
-    $field_state['items'] = $currentItems;
-    foreach ($items as $item) {
-      if (!in_array($item->target_id, array_column($currentItems, 'target_id'))) {
-        $items->removeItem($item->getName());
-      }
+    $fileFieldName = $this->fieldDefinition->getName();
+
+    foreach ($translationFiles as $languageId => $translationFileItems) {
+      $translation = $entity->hasTranslation($languageId) ?
+        $entity->getTranslation($languageId) :
+        $entity->addTranslation($languageId, $entityValues);
+
+      $translation->set($fileFieldName, $translationFileItems);
     }
+
+    $field_state['items'] = $formValues;
 
     static::setWidgetState($form['#parents'], $field_name, $form_state, $field_state);
   }
@@ -222,19 +229,27 @@ class FileMultiLanguageWidget extends FileWidget {
   public function extractFormValuesMultiLanguage(FieldItemListInterface $items, array $form, FormStateInterface $form_state) {
     $fieldName = $this->fieldDefinition->getName();
 
-    // Extract the values from $form_state->getValues().
-    $path = array_merge($form['#parents'], [$fieldName]);
-    $values = NestedArray::getValue($form_state->getValues(), $path);
+    // Don't extract from $formState->getValues(),
+    // it does not return all files when deleting a file from a language.
+    $requestValues = $this->request->request->all();
+
+    $values = $requestValues[$fieldName] ?? [];
     if (!empty($values['languages'])) {
       foreach ($values['languages'] as &$files) {
         if (empty($files['data'])) {
           continue;
         }
-        foreach ($files['data'] as &$file) {
-          $file['fids'] = !empty($file['fids']) ? ((array) $file['fids']) : [];
+
+        foreach ($files['data'] as $fileIndex => &$fileDataItem) {
+          if (empty($fileDataItem['fids'])) {
+            unset($files['data'][$fileIndex]);
+            continue;
+          }
+          $fileDataItem['fids'] = !empty($fileDataItem['fids']) ? ((array) $fileDataItem['fids']) : [];
         }
       }
     }
+
     if ($values) {
       // Account for drag-and-drop reordering if needed.
       if (!$this->handlesMultipleValues()) {
@@ -246,7 +261,12 @@ class FileMultiLanguageWidget extends FileWidget {
           if (!is_array($data) || !array_key_exists('data', $data)) {
             continue;
           }
+
           foreach ($data['data'] as $value) {
+            if (empty($value['fids'])) {
+              continue;
+            }
+
             $value['language'] = $language;
             $newValues[] = $value;
           }
@@ -280,6 +300,8 @@ class FileMultiLanguageWidget extends FileWidget {
       }
       static::setWidgetState($form['#parents'], $fieldName, $form_state, $field_state);
     }
+
+    return $values;
   }
 
   /**
