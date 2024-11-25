@@ -120,13 +120,14 @@ class MeetingDocumentForm implements ContainerInjectionInterface {
     $formDocType = $form_state->getValue('field_document_types') ?? [];
     $docTypeId = $request->get('field_document_types') ?? (!empty($formDocType)
       ? reset($formDocType)['target_id'] : NULL);
+    $docTypeId = is_array($docTypeId) ? reset($docTypeId) : $docTypeId;
     $options = [];
 
     $routeRedirect = "edw_event.documents.$phase";
     if (!empty($agendaId)) {
       $options['fragment'] = "$agendaId";
     }
-    if (!empty($docTypeId)) {
+    if (!empty($docTypeId) && !$agendaId) {
       $options['fragment'] = "$docTypeId";
       $routeRedirect = "edw_event.documents.$phase.document_type";
     }
