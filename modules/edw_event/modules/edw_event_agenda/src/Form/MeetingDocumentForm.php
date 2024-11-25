@@ -7,8 +7,10 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * Document form.
@@ -32,16 +34,26 @@ class MeetingDocumentForm implements ContainerInjectionInterface {
   protected $requestStack;
 
   /**
+   * The route provider.
+   *
+   * @var \Drupal\Core\Routing\RouteProviderInterface
+   */
+  protected $routeProvider;
+
+  /**
    * Constructs a MeetingAgendaForm form object.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The current request.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
+   *   The route provider service.
    */
-  public function __construct(RequestStack $request_stack, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(RequestStack $request_stack, EntityTypeManagerInterface $entity_type_manager, RouteProviderInterface $route_provider) {
     $this->requestStack = $request_stack;
     $this->nodeStorage = $entity_type_manager->getStorage('node');
+    $this->routeProvider = $route_provider;
   }
 
   /**
@@ -50,7 +62,8 @@ class MeetingDocumentForm implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('request_stack'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('router.route_provider')
     );
   }
 
@@ -97,9 +110,20 @@ class MeetingDocumentForm implements ContainerInjectionInterface {
     $docTypeId = $request->get('field_document_types') ?? (!empty($formDocType)
       ? reset($formDocType)['target_id'] : NULL);
     $options = [];
-    if (!empty($docTypeId)) {
+
+    // Check for valid route.
+    $documentTypeRoute = "edw_event.documents.$phase.document_type";
+    $routeExists = TRUE;
+    try {
+      $this->routeProvider->getRouteByName($documentTypeRoute);
+    }
+    catch (RouteNotFoundException) {
+      $routeExists = FALSE;
+    }
+
+    if (!empty($docTypeId) && $routeExists) {
       $options['fragment'] = "$docTypeId";
-      $form_state->setRedirect("edw_event.documents.$phase.document_type", ['node' => $meetingId], $options);
+      $form_state->setRedirect($documentTypeRoute, ['node' => $meetingId], $options);
       return;
     }
     if (!empty($agendaId)) {
