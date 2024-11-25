@@ -123,12 +123,12 @@ class MeetingDocumentForm implements ContainerInjectionInterface {
     $options = [];
 
     $routeRedirect = "edw_event.documents.$phase";
+    if (!empty($agendaId)) {
+      $options['fragment'] = "$agendaId";
+    }
     if (!empty($docTypeId)) {
       $options['fragment'] = "$docTypeId";
       $routeRedirect = "edw_event.documents.$phase.document_type";
-    }
-    if (!empty($agendaId)) {
-      $options['fragment'] = "$agendaId";
     }
     $this->moduleHandler->invokeAll('meeting_document_form_alter_route_redirect', [
       $request, &$routeRedirect, &$options,
