@@ -1,3 +1,4 @@
+console.log("test");
 (function ($, Drupal, drupalSettings, once) {
   function dynamicMode(context, element, paragraph, $lgContainer, optionset) {
     // See more: https://www.lightgalleryjs.com/demos/dynamic-mode.

@@ -22,6 +22,8 @@
 #}
 {% apply spaceless %}
 
+{{ attach_library('edw_paragraphs_gallery/light_gallery') }}
+
 {# Internal properties #}
 {% set comp_class = 'lightgallery' %}
 {% set _extra_attributes = '' %}
@@ -44,15 +46,15 @@
 
 {# Print the result #}
 <div id="{{ 'gallery-' ~ _variant ~ '-' ~ identifier }}" class="{{ comp_class }}"{{ _extra_attributes|raw }}>
-<!--javascript will load dynamic elements from drupalSettings-->
-{% if _variant == 'thumbnails' %}
-  {% for item in items %}
-    <a href="{{ item.src }}" class="gallery-item"
-       data-src="{{ item.src }}"
-       data-sub-html="<h4>{{ item.caption }}</h4>">
-      <img src="{{ item.thumb }}" class="img-responsive"/>
-    </a>
-  {% endfor %}
-{% endif %}
+  <!--javascript will load dynamic elements from drupalSettings-->
+  {% if _variant == 'thumbnails' %}
+    {% for item in items %}
+      <a href="{{ item.src }}" class="gallery-item"
+        data-src="{{ item.src }}"
+        data-sub-html="<h4>{{ item.caption }}</h4>">
+        <img src="{{ item.thumb }}" class="img-responsive"/>
+      </a>
+    {% endfor %}
+  {% endif %}
 </div>
 {% endapply %}

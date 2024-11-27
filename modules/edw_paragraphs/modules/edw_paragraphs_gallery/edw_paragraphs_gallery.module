@@ -11,10 +11,9 @@ use Drupal\media\Plugin\media\Source\Image;
 /**
  * Implements hook_theme().
  */
-function edw_paragraphs_gallery_theme() {
+function edw_paragraphs_gallery_theme($existing, $type, $theme, $path) : array {
   return [
     'paragraph__edw_gallery' => [
-      'render element' => 'element',
       'template' => 'paragraph--edw-gallery',
       'base hook' => 'paragraph',
     ],
