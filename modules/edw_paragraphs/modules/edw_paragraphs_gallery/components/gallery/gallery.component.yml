@@ -1,0 +1,89 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/10.1.x/core/modules/sdc/src/metadata.schema.json
+name: Navbar
+status: experimental
+description: 'Navbar description'
+libraries:
+  - edw_paragraphs_gallery/light_gallery
+
+# libraryOverrides:
+#   css:
+#     theme:
+#       /libraries/lightgallery/dist/css/lightgallery-bundle.min.css: {}
+#       //cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css: { type: external, minified: true }
+#   js:
+#     //cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js: { type: external, minified: true }
+#     /libraries/lightgallery/dist/plugins/autoplay/lg-autoplay.min.js: { minified: true }
+#     /libraries/lightgallery/dist/plugins/fullscreen/lg-fullscreen.min.js: { minified: true }
+#     /libraries/lightgallery/dist/plugins/thumbnail/lg-thumbnail.min.js: { minified: true }
+#     /libraries/lightgallery/dist/plugins/video/lg-video.min.js: { minified: true }
+#     /libraries/lightgallery/dist/plugins/zoom/lg-zoom.min.js: { minified: true }
+#     /libraries/lightgallery/dist/plugins/hash/lg-hash.min.js: { minified: true }
+#     /libraries/lightgallery/dist/lightgallery.min.js: { minified: true }
+#     js/lightgallery-load.js: {}
+  # dependencies:
+  #   - core/jquery
+  #   - core/once
+  #   - core/drupalSettings
+
+props:
+  type: object
+  properties:
+    comp_att:
+      type: Drupal\Core\template\Attribute
+      title: Component attribute
+      description: Wrapper component attributes
+
+    slotBranding_att:
+      type: Drupal\Core\template\Attribute
+      title: Component branding attribute
+      description: Component Branding attributes
+
+    slotNav_att:
+      type: Drupal\Core\template\Attribute
+      title: Component navigation attribute
+      description: Component navigation attributes
+
+    slotSearch_att:
+      type: Drupal\Core\template\Attribute
+      title: Component search attribute
+      description: Component search attributes
+
+
+    comp_classes:
+      type: array
+      items:
+        type: string
+      title: Navbar classes
+      description: An array of utility classes. Use to add extra classes or custom CSS classes over to this component.
+
+    slotBranding_classes:
+      type: array
+      items:
+        type: string
+      title: Navbar branding classes
+      description: An array of utility classes. Use to add extra classes or custom CSS classes over to this component.
+
+    slotNav_classes:
+      type: array
+      items:
+        type: string
+      title: Navbar navigation classes
+      description: An array of utility classes. Use to add extra classes or custom CSS classes over to this component.
+
+    slotSearch_classes:
+      type: array
+      items:
+        type: string
+      title: Navbar Search classes
+      description: An array of utility classes. Use to add extra classes or custom CSS classes over to this component.
+
+slots:
+  branding:
+    title: Branding
+    description: Slot branding description.
+  nav:
+    title: Content
+    description: Slot content description.
+  search:
+    title: Content
+    description: Slot search description.
