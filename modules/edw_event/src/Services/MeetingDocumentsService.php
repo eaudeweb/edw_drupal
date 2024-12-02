@@ -2,9 +2,9 @@
 
 namespace Drupal\edw_event\Services;
 
-use Drupal\backup_migrate\Core\Translation\TranslatableTrait;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\taxonomy\TermInterface;
 
@@ -13,7 +13,7 @@ use Drupal\taxonomy\TermInterface;
  */
 class MeetingDocumentsService {
 
-  use TranslatableTrait;
+  use StringTranslationTrait;
 
   const FIELD_DOCUMENT_PHASE = 'field_document_phase';
 
