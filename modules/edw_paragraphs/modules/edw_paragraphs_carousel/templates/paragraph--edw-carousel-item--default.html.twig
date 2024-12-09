@@ -1,0 +1,19 @@
+{#
+/**
+ * @file
+ * EDW carousel item module implementation to display a paragraph.
+ */
+#}
+
+{% extends "paragraph.html.twig" %}
+
+ {% set attributes = attributes.addClass('grid-container') %}
+
+{% block content %}
+  {% include "edw_paragraphs_carousel:slider-item" with {
+    media: content.field_media,
+    title: content.field_title,
+    description: content.field_description,
+    link: content.field_link,
+  } %}
+{% endblock %}

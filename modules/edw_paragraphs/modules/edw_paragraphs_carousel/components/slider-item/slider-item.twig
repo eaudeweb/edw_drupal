@@ -1,0 +1,67 @@
+{#
+/**
+ * @file
+ *
+ * Slider item Component.
+ *
+ * Proprietes
+ *  media: string
+ *  title: string
+ *  description: string
+ *
+ *  classes: classes array,
+ *
+ * Slots
+ *  slide_item__slot_media
+ *  slide_item__slot_main
+ *  slide_item__slot_title
+ *  slide_item__slot_description
+ *  slide_item__slot_link
+ */
+#}
+
+{# Set default value #}
+
+{% if arrows is not defined %}
+  {% set arrows = 'true' %}
+{% else %}
+  {% set arrows = arrows ? 'true' : 'false' %}
+{% endif %}
+
+{% set infinite = infinite ? 'true' : 'false' %}
+
+{# Create attributres #}
+{% set attributes = attributes ?: create_attribute() %}
+
+{# Component classes #}
+{% set classes = [
+  'grid-container',
+]|merge(classes ?: []) %}
+
+{# Add extra attributes and classes #}
+{% set attributes = attributes.addClass(classes) %}
+{% set attributes = attributes.setAttribute('data-dots', dots) %}
+
+{#--- Component ---#}
+{% block slide_item__slot_media %}
+  <div class="slide-item__media">
+    {{ media }}
+  </div>
+{% endblock %}
+
+{% block slide_item__slot_main %}
+  <div class="w-content">
+    {%- block slide_item__slot_title -%}
+      {{- title -}}
+    {%- endblock -%}
+
+    {% block slide_item__slot_description %}
+      {{ description }}
+    {% endblock %}
+
+    {% block slide_item__slot_link %}
+      {{ link }}
+    {% endblock %}
+  </div>
+{% endblock %}
+

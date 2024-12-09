@@ -1,0 +1,48 @@
+{#
+/**
+ * @file
+ * Slider Component.
+ * Proprietes
+ *  dots: true|false
+ *  infinite: true|false
+ *  fade: true|false,
+ *  arrows: true|false,
+ *
+ * Slots
+ *  slide_slot_main
+ */
+#}
+
+{# Set default value #}
+{% if dots is not defined %}
+  {% set dots = 'true' %}
+{% else %}
+  {% set dots = dots ? 'true' : 'false' %}
+{% endif %}
+
+{% if arrows is not defined %}
+  {% set arrows = 'true' %}
+{% else %}
+  {% set arrows = arrows ? 'true' : 'false' %}
+{% endif %}
+
+{% set infinite = infinite ? 'true' : 'false' %}
+{% set fade = fade ? 'true' : 'false' %}
+
+{# Create attributres #}
+{% set attributes = attributes ?: create_attribute() %}
+
+{# Component classes #}
+{% set slider_classes = [
+  'slider',
+]|merge(slider_classes ?: []) %}
+
+{# Add extra attributes #}
+{% set attributes = attributes.setAttribute('data-dots', dots) %}
+{% set attributes = attributes.setAttribute('data-infinite', infinite) %}
+{% set attributes = attributes.setAttribute('data-arrows', arrows) %}
+{% set attributes = attributes.setAttribute('data-fade', fade) %}
+
+<div {{ attributes.addClass(slider_classes) }}>
+  {{ content }}
+</div>
