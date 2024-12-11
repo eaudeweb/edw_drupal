@@ -3,7 +3,7 @@
  * slider.js
  */
 
-(function ($, Drupal, drupalSettings, once) {
+(function ($, Drupal, once) {
   Drupal.behaviors.carousel = {
     attach: function (context, settings) {
       once('carousel', '.slider', context).forEach(function (carousel) {
