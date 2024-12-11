@@ -1,12 +1,7 @@
-// (($, Drupal) => {
-//   Drupal.behaviors.chip = {
-//     attach(context) {
-//       context.querySelectorAll('.slider').forEach((slider) => {
-//         slider.slick()
-//       });
-//     },
-//   };
-// })(jQuery, Drupal);
+/**
+ * @file
+ * slider.js
+ */
 
 (function ($, Drupal, drupalSettings, once) {
   Drupal.behaviors.carousel = {
