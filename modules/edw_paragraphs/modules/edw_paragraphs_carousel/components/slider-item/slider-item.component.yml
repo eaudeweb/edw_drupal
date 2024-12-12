@@ -25,12 +25,22 @@ props:
       title: Slider item link
       description: Link description.
 
-    classes:
+    slider_item__view_mode:
+      type: string
+      title: Slider item link
+      description: Link description.
+
+    slider_item__classes:
       type: array
       items:
         type: string
       title: Navbar classes
       description: An array of utility classes. Use to add extra classes or custom CSS classes over to this component.
+
+    slider_item__attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+      description: A list of HTML attributes for the slider item
 
 slots:
   slide_item__slot_media:

@@ -23,7 +23,7 @@ function edw_paragraphs_carousel_theme($existing, $type, $theme, $path) : array 
     'field__paragraph__field_paragraphs' => [
       'template' => '_fields/field--paragraph--field-paragraphs',
       'base hook' => 'field',
-    ],
+    ]
   ];
 }
 

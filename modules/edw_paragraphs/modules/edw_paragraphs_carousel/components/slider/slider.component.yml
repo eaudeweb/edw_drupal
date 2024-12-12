@@ -34,6 +34,11 @@ props:
       title: Navbar classes
       description: An array of utility classes. Use to add extra classes or custom CSS classes over to this component.
 
+    slider_attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+      description: A list of HTML attributes for the slider
+
 slots:
   slide_slot_main:
     title: Main

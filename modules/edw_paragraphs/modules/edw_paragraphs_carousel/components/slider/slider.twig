@@ -30,19 +30,24 @@
 {% set fade = fade ? 'true' : 'false' %}
 
 {# Create attributres #}
-{% set attributes = attributes ?: create_attribute() %}
+{% set slider_attributes = slider_attributes ?: create_attribute() %}
 
 {# Component classes #}
 {% set slider_classes = [
   'slider',
+  'full',
 ]|merge(slider_classes ?: []) %}
 
-{# Add extra attributes #}
-{% set attributes = attributes.setAttribute('data-dots', dots) %}
-{% set attributes = attributes.setAttribute('data-infinite', infinite) %}
-{% set attributes = attributes.setAttribute('data-arrows', arrows) %}
-{% set attributes = attributes.setAttribute('data-fade', fade) %}
+{# Add extra test #}
+{% set slider_attributes = slider_attributes.setAttribute('data-dots', dots) %}
+{% set slider_attributes = slider_attributes.setAttribute('data-infinite', infinite) %}
+{% set slider_attributes = slider_attributes.setAttribute('data-arrows', arrows) %}
+{% set slider_attributes = slider_attributes.setAttribute('data-fade', fade) %}
 
-<div {{ attributes.addClass(slider_classes) }}>
-  {{ content }}
+<div class="grid-container">
+  <div{{ slider_attributes.addClass(slider_classes) }}>
+    {% block slide_slot_main %}
+      {{ content }}
+    {% endblock %}
+  </div>
 </div>

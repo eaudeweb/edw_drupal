@@ -8,8 +8,8 @@
  *  media: string
  *  title: string
  *  description: string
- *
- *  classes: classes array,
+ *  slider_item__view_mode: string
+ *  slider_item__classes: classes array,
  *
  * Slots
  *  slide_item__slot_media
@@ -21,47 +21,38 @@
 #}
 
 {# Set default value #}
-
-{% if arrows is not defined %}
-  {% set arrows = 'true' %}
-{% else %}
-  {% set arrows = arrows ? 'true' : 'false' %}
-{% endif %}
-
-{% set infinite = infinite ? 'true' : 'false' %}
+{% set _view_mode = slider_item__view_mode ?: "default" %}
 
 {# Create attributres #}
-{% set attributes = attributes ?: create_attribute() %}
+{% set slider_item__attributes = slider_item__attributes ?: create_attribute() %}
 
 {# Component classes #}
 {% set classes = [
-  'grid-container',
-]|merge(classes ?: []) %}
-
-{# Add extra attributes and classes #}
-{% set attributes = attributes.addClass(classes) %}
-{% set attributes = attributes.setAttribute('data-dots', dots) %}
+  'carousel-item',
+  'carousel-item--' ~ _view_mode,
+]|merge(slider_item__classes ?: []) %}
 
 {#--- Component ---#}
-{% block slide_item__slot_media %}
-  <div class="slide-item__media">
-    {{ media }}
-  </div>
-{% endblock %}
+<div{{ slider_item__attributes.addClass(classes) }}>
+  {% block slide_item__slot_media %}
+    <div class="slide-item__media">
+      {{ media }}
+    </div>
+  {% endblock %}
 
-{% block slide_item__slot_main %}
-  <div class="w-content">
-    {%- block slide_item__slot_title -%}
-      {{- title -}}
-    {%- endblock -%}
+  {% block slide_item__slot_main %}
+    <div class="w-content">
+      {%- block slide_item__slot_title -%}
+        {{- title -}}
+      {%- endblock -%}
 
-    {% block slide_item__slot_description %}
-      {{ description }}
-    {% endblock %}
+      {% block slide_item__slot_description %}
+        {{ description }}
+      {% endblock %}
 
-    {% block slide_item__slot_link %}
-      {{ link }}
-    {% endblock %}
-  </div>
-{% endblock %}
-
+      {% block slide_item__slot_link %}
+        {{ link }}
+      {% endblock %}
+    </div>
+  {% endblock %}
+</div>
