@@ -1,6 +1,6 @@
 .c--container {
   isolation: isolate;
-  display: grid;
+  /* display: grid; admin issues */
   grid-template-areas: 'stack';
 
   & > * {
