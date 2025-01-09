@@ -9,6 +9,18 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\media\Plugin\media\Source\Image;
 
 /**
+ * Implements hook_theme().
+ */
+function edw_paragraphs_gallery_theme($existing, $type, $theme, $path) : array {
+  return [
+    'paragraph__edw_gallery' => [
+      'template' => 'paragraph--edw-gallery',
+      'base hook' => 'paragraph',
+    ],
+  ];
+}
+
+/**
  * Implements hook_preprocess_paragraph__edw_gallery().
  */
 function edw_paragraphs_gallery_preprocess_paragraph__edw_gallery(&$variables) {
