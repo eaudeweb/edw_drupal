@@ -5,8 +5,10 @@ namespace Drupal\edw_event_agenda\Form;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -32,16 +34,36 @@ class MeetingDocumentForm implements ContainerInjectionInterface {
   protected $requestStack;
 
   /**
+   * The route provider.
+   *
+   * @var \Drupal\Core\Routing\RouteProviderInterface
+   */
+  protected $routeProvider;
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructs a MeetingAgendaForm form object.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The current request.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
+   *   The route provider service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(RequestStack $request_stack, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(RequestStack $request_stack, EntityTypeManagerInterface $entity_type_manager, RouteProviderInterface $route_provider, ModuleHandlerInterface $module_handler) {
     $this->requestStack = $request_stack;
     $this->nodeStorage = $entity_type_manager->getStorage('node');
+    $this->routeProvider = $route_provider;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -50,7 +72,9 @@ class MeetingDocumentForm implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('request_stack'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('router.route_provider'),
+      $container->get('module_handler')
     );
   }
 
@@ -96,16 +120,21 @@ class MeetingDocumentForm implements ContainerInjectionInterface {
     $formDocType = $form_state->getValue('field_document_types') ?? [];
     $docTypeId = $request->get('field_document_types') ?? (!empty($formDocType)
       ? reset($formDocType)['target_id'] : NULL);
+    $docTypeId = is_array($docTypeId) ? reset($docTypeId) : $docTypeId;
     $options = [];
-    if (!empty($docTypeId)) {
-      $options['fragment'] = "$docTypeId";
-      $form_state->setRedirect("edw_event.documents.$phase.document_type", ['node' => $meetingId], $options);
-      return;
-    }
+
+    $routeRedirect = "edw_event.documents.$phase";
     if (!empty($agendaId)) {
       $options['fragment'] = "$agendaId";
     }
-    $form_state->setRedirect("edw_event.documents.$phase", ['node' => $meetingId], $options);
+    if (!empty($docTypeId) && !$agendaId) {
+      $options['fragment'] = "$docTypeId";
+      $routeRedirect = "edw_event.documents.$phase.document_type";
+    }
+    $this->moduleHandler->invokeAll('meeting_document_form_alter_route_redirect', [
+      $form_state, $request, &$routeRedirect, &$options,
+    ]);
+    $form_state->setRedirect($routeRedirect, ['node' => $meetingId], $options);
   }
 
   /**
