@@ -10,12 +10,9 @@ In `composer.json`:
 
 ```php
 "require": {
-  "drupal/core": "^9.4 || ^10",
+  "drupal/core": "^9.4 || ^10 || ^11",
   "drupal/better_exposed_filters": "^6.0",
   "drupal/entity_browser": "^2.9",
-  "drupal/file_delete": "^2.0",
-  "drupal/file_replace": "^1.3",
-  "drupal/file_to_media": "^1.0",
   "drupal/search_api_solr":"^4.3",
   "drupal/views_bulk_operations": "^4.2"
 }
@@ -30,7 +27,7 @@ The `entity_reference_revisions` module requires the following patch to be appli
 }
 ```
 
-and for core:^10:
+and for core:^10 || ^11:
 
 ```php
 "patches": {
@@ -48,6 +45,15 @@ for core:^9.4
     }
 }
 ```
+
+For a better experience install `file_replace` and apply the patch:
+
+```php
+"drupal/file_replace": {
+  "#3300659 - Replace files directly from file widget": "https://www.drupal.org/files/issues/2024-02-04/3300659-31-file-replace-button--seven-themes.patch"
+},
+```
+and enable the settings at `/admin/config/file_replace/settings`.
 
 ## Basic Configuration
 
