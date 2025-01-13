@@ -30,7 +30,6 @@
 
 
 {% block paragraph %}
-  {% set stay_open = false %}
   {% set items = items|default([]) %}
   {% set accordion_items = [] %}
 
@@ -44,7 +43,7 @@
     {% set accordion_items = accordion_items|merge([accordion_item]) %}
   {% endfor %}
 
-  {% include 'radix:accordion' with {
+  {% include 'edw_paragraphs_accordion:accordion' with {
     items: accordion_items,
   } %}
 {% endblock %}
