@@ -5,8 +5,6 @@
   *
   * Available properties:
   * - accordion_id (int) (default: accordion-random(1000))
-  * - title (string) (default: '')
-  * - title_tag (string) (default: 'h2')
   * - flush (boolean) (default: false)
   * - stay_open (boolean) (default: false)
   * - open_item_id (int) (default: 0)
@@ -25,7 +23,6 @@
   *
   * Availabel attributes -> att
   * - accordion_att (Drupal\Core\Template\Attribute)
-  * - title_att (drupal attrs) (Drupal\Core\Template\Attribute)
   * - accordion_item_att (Drupal\Core\Template\Attribute)
   *
   * usage example: @see README.md
@@ -34,15 +31,12 @@
 #}
 
 {# Set default value #}
-{% set title = title|default('') %}
-{% set title_tag = title_tag|default('h2') %}
 {% set items = items|default([]) %}
 {% set open_item_id = open_item_id|default(1) %}
 {% set icon_position = icon_position|default('right') %}
 {% set flush = flush ?? false %}
 
 {# Create attributres #}
-{% set title_att = title_att ?: create_attribute() %}
 {% set accordion_item_att = accordion_item_att ?: create_attribute() %}
 {% set accordion_att = accordion_att ?: create_attribute() %}
 
@@ -71,16 +65,6 @@
 {# Render component #}
 {% apply spaceless %}
   {% if items is not empty %}
-    {%- if title is not empty -%}
-      {%-
-        include 'edwt:heading' with {
-          heading_html_tag: 'h2',
-          content: title,
-          heading_attributes: title_att,
-        }
-      -%}
-    {%- endif -%}
-
     <div{{ accordion_att.addClass(accordion_classes) }}>
       {% for item in items %}
         {% set content = item.content|default('') %}

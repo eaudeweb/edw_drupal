@@ -12,25 +12,6 @@ props:
       description: Unique ID for the accordion component.
       default: 0
 
-    title:
-      type: string
-      title: Title
-      description: Title text for the accordion.
-      default: ''
-
-    title_tag:
-      type: string
-      title: Title Tag
-      description: HTML tag for the title.
-      enum:
-        - h1
-        - h2
-        - h3
-        - h4
-        - h5
-        - h6
-      default: h2
-
     flush:
       type: boolean
       title: Flush
@@ -87,11 +68,6 @@ props:
       type: Drupal\Core\Template\Attribute
       title: Attributes
       description: A list of HTML attributes for the accordion.
-
-    title_att:
-      type: Drupal\Core\Template\Attribute
-      title: Attributes
-      description: A list of HTML attributes for the button.
 
     accordion_item_att:
       type: Drupal\Core\Template\Attribute
