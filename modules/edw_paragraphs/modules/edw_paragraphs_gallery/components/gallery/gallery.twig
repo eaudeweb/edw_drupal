@@ -1,5 +1,12 @@
 {#
 /**
+ * @file
+ * Frontend Component.
+ */
+#}
+
+{#
+/**
  * Parameters:
  * - "identifier" (string): Unique machine readable name.
  * - "items" (array) (default: []): List with media items.
@@ -15,14 +22,16 @@
 #}
 {% apply spaceless %}
 
+{{ attach_library('edw_paragraphs_gallery/light_gallery') }}
+
 {# Internal properties #}
-{% set _css_class = 'lightgallery' %}
+{% set comp_class = 'lightgallery' %}
 {% set _extra_attributes = '' %}
 {% set _variant = variant|default('inline') %}
 
 {# Internal logic - Process properties #}
 {% if extra_classes is defined and extra_classes is not empty %}
-  {% set _css_class = _css_class ~ ' ' ~ extra_classes %}
+  {% set comp_class = comp_class ~ ' ' ~ extra_classes %}
 {% endif %}
 
 {% if extra_attributes is defined and extra_attributes is not empty and extra_attributes is iterable %}
@@ -36,16 +45,16 @@
 {% endif %}
 
 {# Print the result #}
-<div id="{{ 'gallery-' ~ _variant ~ '-' ~ identifier }}" class="{{ _css_class }}"{{ _extra_attributes|raw }}>
-<!--javascript will load dynamic elements from drupalSettings-->
-{% if _variant == 'thumbnails' %}
-  {% for item in items %}
-    <a href="{{ item.src }}" class="gallery-item"
-       data-src="{{ item.src }}"
-       data-sub-html="<h4>{{ item.caption }}</h4>">
-      <img src="{{ item.thumb }}" class="img-responsive"/>
-    </a>
-  {% endfor %}
-{% endif %}
+<div id="{{ 'gallery-' ~ _variant ~ '-' ~ identifier }}" class="{{ comp_class }}"{{ _extra_attributes|raw }}>
+  <!--javascript will load dynamic elements from drupalSettings-->
+  {% if _variant == 'thumbnails' %}
+    {% for item in items %}
+      <a href="{{ item.src }}" class="gallery-item"
+        data-src="{{ item.src }}"
+        data-sub-html="<h4>{{ item.caption }}</h4>">
+        <img src="{{ item.thumb }}" class="img-responsive"/>
+      </a>
+    {% endfor %}
+  {% endif %}
 </div>
 {% endapply %}
