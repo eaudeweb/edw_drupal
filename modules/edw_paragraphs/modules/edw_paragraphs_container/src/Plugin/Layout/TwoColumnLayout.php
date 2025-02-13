@@ -18,7 +18,6 @@ class TwoColumnLayout extends LayoutDefault implements PluginFormInterface {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-
     $columnSettings = [];
 
     foreach (array_keys($this->getColumns()) as $column) {
@@ -31,16 +30,15 @@ class TwoColumnLayout extends LayoutDefault implements PluginFormInterface {
     }
 
     return parent::defaultConfiguration() + [
-      'extra_classes' => [],
-      'column_widths' => '50-50',
-    ] + $columnSettings;
+        'extra_classes' => [],
+        'column_widths' => '50-50',
+      ] + $columnSettings;
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-
     $configuration = $this->getConfiguration();
 
     $form['extra_classes'] = [
@@ -75,7 +73,6 @@ class TwoColumnLayout extends LayoutDefault implements PluginFormInterface {
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-
     // Save the column widths.
     $this->configuration['column_widths'] = $form_state->getValue('column_widths');
 
@@ -114,7 +111,6 @@ class TwoColumnLayout extends LayoutDefault implements PluginFormInterface {
    *   The form.
    */
   protected function getColumnForm($column, array $configuration) {
-
     $columns = $this->getColumns();
     $form = [];
 
@@ -132,6 +128,7 @@ class TwoColumnLayout extends LayoutDefault implements PluginFormInterface {
       '#description' => $this->t('If checked, the column will span the full width of the page.'),
     ];
 
+    $configureColumnLayoutAccess = $this->currentUser()->hasPermission('configure column layout options');
     $form[$column]['wrapper'] = [
       '#type' => 'select',
       '#title' => $this->t('Wrapper'),
@@ -146,7 +143,7 @@ class TwoColumnLayout extends LayoutDefault implements PluginFormInterface {
       ],
       '#default_value' => $configuration[$column]['wrapper'],
       '#description' => $this->t('Select the HTML element to wrap the column.'),
-      '#access' => $this->currentUser()->hasPermission('configure column layout options'),
+      '#access' => $configureColumnLayoutAccess,
     ];
 
     $form[$column]['grid_columns'] = [
@@ -154,7 +151,7 @@ class TwoColumnLayout extends LayoutDefault implements PluginFormInterface {
       '#attributes' => [
         'class' => ['container-inline'],
       ],
-      '#access' => $this->currentUser()->hasPermission('configure column layout options'),
+      '#access' => $configureColumnLayoutAccess,
     ];
 
     $form[$column]['grid_columns']['grid_column_start'] = [
@@ -164,7 +161,7 @@ class TwoColumnLayout extends LayoutDefault implements PluginFormInterface {
       '#max' => 12,
       '#default_value' => $configuration[$column]['grid_column_start'],
       '#description' => $this->t('The column start position in the grid.'),
-      '#access' => $this->currentUser()->hasPermission('configure column layout options'),
+      '#access' => $configureColumnLayoutAccess,
     ];
 
     $form[$column]['grid_columns']['grid_column_end'] = [
@@ -174,7 +171,7 @@ class TwoColumnLayout extends LayoutDefault implements PluginFormInterface {
       '#max' => 12,
       '#default_value' => $configuration[$column]['grid_column_end'],
       '#description' => $this->t('The column end position in the grid.'),
-      '#access' => $this->currentUser()->hasPermission('configure column layout options'),
+      '#access' => $configureColumnLayoutAccess,
     ];
 
     return $form;

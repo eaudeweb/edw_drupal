@@ -19,9 +19,9 @@ class OneColumnLayout extends LayoutDefault implements PluginFormInterface {
    */
   public function defaultConfiguration() {
     return parent::defaultConfiguration() + [
-      'extra_classes' => [],
-      'width' => 'default',
-    ];
+        'extra_classes' => [],
+        'width' => 'default',
+      ];
   }
 
   /**
@@ -70,4 +70,5 @@ class OneColumnLayout extends LayoutDefault implements PluginFormInterface {
       'full' => $this->t('Full width'),
     ];
   }
+
 }
